@@ -4,12 +4,12 @@ from fastapi import FastAPI,HTTPException
 
 from models import Veiculo
 
-from database import 
+from database import conectar_banco
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 
 app = FastAPI()
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory="css"), name="css")
 
 @app.get("/")
 def pagina_inicial():
@@ -37,11 +37,7 @@ def cadastrar_veiculo(veiculo: Veiculo):
     conexao.commit()
 
     return veiculo
-
-
-
-
- @app.get("/veiculos/{id}")
+@app.get("/veiculos/{id}")
 def listar_veiculo(id: int):
 
     conexao = conectar_banco()
