@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Sistema de Veículos</title>
+
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>Sistema de Veículos</h1>
+        <p>Cadastro e gerenciamento de veículos</p>
+    </header>
+
+    <main>
+
+        <section class="card">
+
+            <h2>Cadastrar veículo</h2>
+
+            <form id="formVeiculo">
+
+                <input
+                    type="number"
+                    id="id"
+                    placeholder="ID"
+                    required
+                >
+
+                <input
+                    type="text"
+                    id="modelo"
+                    placeholder="Modelo"
+                    required
+                >
+
+                <input
+                    type="text"
+                    id="placa"
+                    placeholder="Placa"
+                    required
+                >
+
+                <input
+                    type="number"
+                    id="quilometragem"
+                    placeholder="Quilometragem"
+                    required
+                >
+
+                <input
+                    type="number"
+                    id="marca_id"
+                    placeholder="ID da marca"
+                    required
+                >
+
+                <button type="submit">
+                    Cadastrar veículo
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <section class="card">
+
+            <h2>Veículos cadastrados</h2>
+
+            <button onclick="listarVeiculos()">
+                Atualizar lista
+            </button>
+
+            <div id="listaVeiculos"></div>
+
+        </section>
+
+    </main>
+
+    <script>
+
+        const formulario = document.getElementById("formVeiculo");
+
+        formulario.addEventListener("submit", async function(event) {
+
+            event.preventDefault();
+
+            const veiculo = {
+
+                id: Number(document.getElementById("id").value),
+
+                modelo: document.getElementById("modelo").value,
+
+                placa: document.getElementById("placa").value,
+
+                quilometragem: Number(
+                    document.getElementById("quilometragem").value
+                ),
+
+                marca_id: Number(
+                    document.getElementById("marca_id").value
+                )
+            };
+
+
+            const resposta = await fetch("/veiculos", {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify(veiculo)
+
+            });
+
+
+            if (resposta.ok) {
+
+                alert("Veículo cadastrado com sucesso!");
+
+                formulario.reset();
+
+                listarVeiculos();
+
+            } else {
+
+                alert("Erro ao cadastrar veículo.");
+
+            }
+
+        });
+
+
+        async function listarVeiculos() {
+
+            const resposta = await fetch("/veiculos");
+
+            const veiculos = await resposta.json();
+
+            const lista = document.getElementById("listaVeiculos");
+
+            lista.innerHTML = "";
+
+
+            veiculos.forEach(function(veiculo) {
+
+                const item = document.createElement("div");
+
+                item.classList.add("veiculo");
+
+                item.innerHTML = `
+                    <strong>${veiculo[1]}</strong>
+
+                    <p>ID: ${veiculo[0]}</p>
+
+                    <p>Placa: ${veiculo[2]}</p>
+
+                    <p>Quilometragem: ${veiculo[3]} km</p>
+
+                    <p>Marca ID: ${veiculo[4]}</p>
+                `;
+
+                lista.appendChild(item);
+
+            });
+
+        }
+
+    </script>
+
+</body>
+
+</html>
